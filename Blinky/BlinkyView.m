@@ -16,9 +16,65 @@
 @implementation BlinkyView
 
 static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
+int monWidth, monHeight, monLong, monShort;
+int shortCount=9;
+int longCount;
+int longOrigin, shortOrigin;
+int gutterShort=10;
+int gutterLong;
+int boxSizeShort;
+int longOffset;
+int shortOffset;
+int longBuffer;
+int colorRandom;
+int countCycle = 0;
+int countReset = 1000;
+unsigned int monTall=0;
+float red, green, blue, alpha;
+int clearTimes = 10;
 
 - (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
+    shortCount = SSRandomIntBetween( 7, 31);
+    gutterShort = SSRandomIntBetween( 5, 17);
+    countReset =SSRandomIntBetween( 100, 1000);
+    
+    clearTimes = shortCount;
+    
+    colorRandom = SSRandomIntBetween( 0, 3);
+    
+    switch (colorRandom) {
+        case 0: // red
+            red=255.0;
+            green=0.0;
+            blue=0.0;
+            break;
+            
+        case 1: // green
+            red=0.0;
+            green=255.0;
+            blue=0.0;
+            break;
+            
+        case 2: // blue
+            red=0.0;
+            green=0.0;
+            blue=255.0;
+            break;
+            
+        case 3: //white
+        default:
+            red=255.0;
+            green=255.0;
+            blue=255.0;
+            break;
+    }
+    
+    //red = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
+    //green = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
+    //blue = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
+    
+    
     self = [super initWithFrame:frame isPreview:isPreview];
     
     if (self)
@@ -34,6 +90,11 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
                                          @"DrawBoth": @"YES"}];
             
             self.animationTimeInterval = 1/30.0;
+            
+            if (isPreview) {
+                shortCount = SSRandomIntBetween(3,5);
+                gutterShort = SSRandomIntBetween(5,15);
+            }
         }
     
     return self;
@@ -60,31 +121,114 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
     NSRect rect;
     NSSize size;
     NSColor *color;
-    float red, green, blue, alpha;
     int shapeType;
     ScreenSaverDefaults *defaults;
     
     size = self.bounds.size;
     
+    monWidth = size.width;
+    monHeight = size.height;
+    
+    if ( monWidth < monHeight )
+    {
+        monLong = monHeight;
+        monShort = monWidth;
+        monTall = 1;
+    }
+    else
+    {
+        monLong = monWidth;
+        monShort = monHeight;
+        monTall = 0;
+    }
+    
+    // Change colours
+    countCycle++;
+    if (countCycle > countReset) {
+        colorRandom = SSRandomIntBetween( 0, 3);
+        countCycle = 0;
+        switch (colorRandom) {
+            case 0: // red
+                red=255.0;
+                green=0.0;
+                blue=0.0;
+                break;
+                
+            case 1: // green
+                red=0.0;
+                green=255.0;
+                blue=0.0;
+                break;
+                
+            case 2: // blue
+                red=0.0;
+                green=0.0;
+                blue=255.0;
+                break;
+                
+            case 3: //white
+            default:
+                red=255.0;
+                green=255.0;
+                blue=255.0;
+                break;
+        }
+        
+    }
+    
+    
     // Calculate random width and height
-    rect.size = NSMakeSize( SSRandomFloatBetween(
-                                                 size.width / 100.0,
-                                                 size.width / 10.0 ),
-                           SSRandomFloatBetween( size.height / 100.0,
-                                                size.height / 10.0 ));
-    // Make size a fixed 10th of screen
-    rect.size = NSMakeSize(  size.height / 10.0, size.height / 10.0);
+    /*
+     rect.size = NSMakeSize( SSRandomFloatBetween( size.width / 100.0,
+     size.width / 10.0 ),
+     SSRandomFloatBetween( size.height / 100.0,
+     size.height / 10.0 ));
+     */
+    
+    //rect.size = NSMakeSize(  size.height / 10.0, size.height / 10.0);
+    //rectC.size = NSMakeSize(  size.height / 10.0, size.height / 10.0);
+    
+    boxSizeShort = monShort / shortCount;
+    
+    longCount = ( monLong / boxSizeShort );
+    
+    //NSLog(@"longCount %d",longCount);
+    
+    gutterLong = gutterShort;
+    longBuffer = ( monLong - ( boxSizeShort * longCount) ) / longCount;
+    
+    rect.size = NSMakeSize( boxSizeShort - gutterShort , boxSizeShort - gutterShort);
     
     // Calculate random origin point
-    rect.origin = SSRandomPointForSizeWithinRect( rect.size, self.bounds );
-    rect.origin = NSMakePoint(1.0, 1.0) ;
-    // position origin on a 16x9 screen, spaced out
-    rect.origin = NSMakePoint(SSRandomIntBetween( 0, 16-1)*size.height / 9,
-                              SSRandomIntBetween( 0, 9-1)*size.height / 9) ;
-    //rect.origin = init(1.0);
+    //rect.origin = SSRandomPointForSizeWithinRect( rect.size, [self bounds] ) ;
+    //rect.origin = NSMakePoint(1.0, 1.0) ;
+    //rect.origin = NSMakePoint(SSRandomIntBetween( 0, 16-1)*size.height / 9,
+    //                          SSRandomIntBetween( 0, 9-1)*size.height / 9) ;
+    
+    //NSLog(@"monTall %d",monTall);
+    
+    longOffset = SSRandomIntBetween( 0, longCount-1);
+    shortOffset = SSRandomIntBetween( 0, shortCount-1);
+    //NSLog(@"longOffset %d",longOffset);
+    //NSLog(@"shortOffset %d",shortOffset);
+    longOrigin = ( longOffset*monShort / shortCount ) + longOffset*longBuffer + (gutterLong/2);
+    shortOrigin = ( shortOffset*monShort / shortCount ) + (gutterShort/2) ;
+    
+    //NSLog(@"longOrigin %d",longOrigin);
+    //NSLog(@"shortOrigin %d",shortOrigin);
+    //NSLog(@"monLong %d",monLong);
+    //NSLog(@"monShort %d",monShort);
+    
+    if ( monTall == 0 ) {
+        rect.origin = NSMakePoint( longOrigin , shortOrigin ) ;
+    }
+    else
+    {
+        rect.origin = NSMakePoint( shortOrigin , longOrigin ) ;
+    }
     
     // Decide what kind of shape to draw
-    shapeType = SSRandomIntBetween( 0, 2 );
+    shapeType = SSRandomIntBetween( 0, 1 );
     
     switch (shapeType)
     {
@@ -92,43 +236,19 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
             path = [NSBezierPath bezierPathWithRect:rect];
             break;
             
-        case 1: // oval
-            path = [NSBezierPath bezierPathWithOvalInRect:rect];
-            break;
-            
-        case 2: // arc
+        case 1: // circle
         default:
-        {
-            float startAngle, endAngle, radius;
-            NSPoint point;
-            
-            startAngle = SSRandomFloatBetween( 0.0, 360.0 );
-            endAngle = SSRandomFloatBetween( startAngle, 360.0 + startAngle );
-            
-            // Use the smallest value for the radius (either width or height)
-            radius = rect.size.width <= rect.size.height ? rect.size.width / 2 : rect.size.height / 2;
-            
-            // Calculate our center point
-            point = NSMakePoint( rect.origin.x + rect.size.width / 2, rect.origin.y + rect.size.height / 2 );
-            
-            // Construct the path
-            path = [NSBezierPath bezierPath];
-            
-            [path appendBezierPathWithArcWithCenter:point radius:radius startAngle:startAngle endAngle:endAngle clockwise:SSRandomIntBetween( 0, 1 )];
-        }
+            path = [NSBezierPath bezierPathWithOvalInRect:rect];
             break;
     }
     
-    // Make the shape always a rectangle
-    path = [NSBezierPath bezierPathWithRect:rect];
-    
     // Calculate a random color
-    red = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
-    green = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
-    blue = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
     alpha = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
     
-    color = [NSColor colorWithCalibratedRed:red green:green blue:blue alpha:alpha];
+    color = [NSColor colorWithCalibratedRed:red
+                                      green:green
+                                       blue:blue
+                                      alpha:alpha];
     
     [color set];
     
@@ -148,6 +268,46 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
     else
         //[path stroke];
     [path fill];
+    
+    
+    
+    // and clear some boxes
+    
+    for (int i=0; i<clearTimes; i++)
+    {
+        
+        rect.size = NSMakeSize( boxSizeShort , boxSizeShort );
+        
+        // Calculate random origin point
+        
+        longOffset = SSRandomIntBetween( 0, longCount-1);
+        shortOffset = SSRandomIntBetween( 0, shortCount-1);
+        longOrigin = ( longOffset*monShort / shortCount ) + longOffset*longBuffer;
+        shortOrigin = ( shortOffset*monShort / shortCount ) ;
+        
+        if ( monTall == 0 ) {
+            rect.origin = NSMakePoint( longOrigin , shortOrigin ) ;
+        }
+        else
+        {
+            rect.origin = NSMakePoint( shortOrigin , longOrigin ) ;
+        }
+        
+        
+        // Make a rectangle
+        path = [NSBezierPath bezierPathWithRect:rect];
+        
+        // make it black
+        color = [NSColor colorWithCalibratedRed:0.0
+                                          green:0.0
+                                           blue:0.0
+                                          alpha:255.0];
+        
+        [color set];
+        
+        // And finally draw it
+        [path fill];
+    }
     
 }
 
