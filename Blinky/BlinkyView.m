@@ -2,11 +2,13 @@
 //  BlinkyView.m
 //  Blinky
 //
-//  Created by David on 8/2/18.
+//  Created by David Robinson on 8/2/18.
 //  Copyright © 2018 Imperfect Code. All rights reserved.
 //
-//  Based on the tutorial "Write a Screen Saver: Part I" by Brian Christensen
+//  Originally based on the tutorial "Write a Screen Saver: Part I" by Brian Christensen
 //  http://cocoadevcentral.com/articles/000088.php
+//
+//  Heavily modified by David Robinson
 //
 
 #import "BlinkyView.h"
@@ -26,9 +28,12 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
             defaults = [ScreenSaverDefaults defaultsForModuleWithName:MyModuleName];
             
             // Register our default values
-            [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:@"NO", @"DrawFilledShapes", @"NO", @"DrawOutlinedShapes", @"YES", @"DrawBoth", nil]];
+            [defaults registerDefaults:@{
+                                         @"DrawFilledShapes": @"NO",
+                                         @"DrawOutlinedShapes": @"NO",
+                                         @"DrawBoth": @"YES"}];
             
-            [self setAnimationTimeInterval:1/30.0];
+            self.animationTimeInterval = 1/30.0;
         }
     
     return self;
@@ -59,13 +64,24 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
     int shapeType;
     ScreenSaverDefaults *defaults;
     
-    size = [self bounds].size;
+    size = self.bounds.size;
     
     // Calculate random width and height
-    rect.size = NSMakeSize( SSRandomFloatBetween( size.width / 100.0, size.width / 10.0 ), SSRandomFloatBetween( size.height / 100.0, size.height / 10.0 ));
+    rect.size = NSMakeSize( SSRandomFloatBetween(
+                                                 size.width / 100.0,
+                                                 size.width / 10.0 ),
+                           SSRandomFloatBetween( size.height / 100.0,
+                                                size.height / 10.0 ));
+    // Make size a fixed 10th of screen
+    rect.size = NSMakeSize(  size.height / 10.0, size.height / 10.0);
     
     // Calculate random origin point
-    rect.origin = SSRandomPointForSizeWithinRect( rect.size, [self bounds] );
+    rect.origin = SSRandomPointForSizeWithinRect( rect.size, self.bounds );
+    rect.origin = NSMakePoint(1.0, 1.0) ;
+    // position origin on a 16x9 screen, spaced out
+    rect.origin = NSMakePoint(SSRandomIntBetween( 0, 16-1)*size.height / 9,
+                              SSRandomIntBetween( 0, 9-1)*size.height / 9) ;
+    //rect.origin = init(1.0);
     
     // Decide what kind of shape to draw
     shapeType = SSRandomIntBetween( 0, 2 );
@@ -103,6 +119,9 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
             break;
     }
     
+    // Make the shape always a rectangle
+    path = [NSBezierPath bezierPathWithRect:rect];
+    
     // Calculate a random color
     red = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
     green = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
@@ -121,12 +140,15 @@ static NSString * const MyModuleName = @"online.imperfectcode.Blinky";
         if (SSRandomIntBetween( 0, 1 ) == 0)
             [path fill];
         else
-            [path stroke];
+            //[path stroke];
+            [path fill];
     }
     else if ([defaults boolForKey:@"DrawFilledShapes"])
         [path fill];
     else
-        [path stroke];
+        //[path stroke];
+    [path fill];
+    
 }
 
 - (BOOL)hasConfigureSheet
