@@ -35,52 +35,86 @@ int clearTimes = 10;
 
 - (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
-    shortCount = SSRandomIntBetween( 7, 31);
+    shortCount = SSRandomIntBetween( 7, 47);
     gutterShort = SSRandomIntBetween( 5, 17);
-    countReset =SSRandomIntBetween( 100, 1000);
+    countReset =SSRandomIntBetween( 101, 997);
     
-    clearTimes = shortCount;
+    clearTimes = pow(shortCount,0.5);
     
-    colorRandom = SSRandomIntBetween( 0, 3);
-    
+    colorRandom = SSRandomIntBetween( 0, 12);
     switch (colorRandom) {
-        case 0: // red
-            red=255.0;
-            green=0.0;
-            blue=0.0;
-            break;
-            
-        case 1: // green
-            red=0.0;
-            green=255.0;
-            blue=0.0;
-            break;
-            
-        case 2: // blue
-            red=0.0;
-            green=0.0;
-            blue=255.0;
-            break;
-            
-        case 3: //white
+        case 0: // white
         default:
             red=255.0;
             green=255.0;
             blue=255.0;
             break;
+        case 1: // red
+            red=255.0;
+            green=0.0;
+            blue=0.0;
+            break;
+        case 2: // green
+            red=0.0;
+            green=255.0;
+            blue=0.0;
+            break;
+        case 3: // blue
+            red=0.0;
+            green=0.0;
+            blue=255.0;
+            break;
+        case 4: // yellow
+            red=255.0;
+            green=255.0;
+            blue=0.0;
+            break;
+        case 5: // cyan
+            red=0.0;
+            green=255.0;
+            blue=255.0;
+            break;
+        case 6: // magenta
+            red=255.0;
+            green=0.0;
+            blue=255.0;
+            break;
+        case 7: // orange
+            red=255.0;
+            green=128.0;
+            blue=0.0;
+            break;
+        case 8: // chartreuse green
+            red=128.0;
+            green=255.0;
+            blue=0.0;
+            break;
+        case 9: // spring green
+            red=0.0;
+            green=255.0;
+            blue=128.0;
+            break;
+        case 10: // azure
+            red=0.0;
+            green=128.0;
+            blue=255.0;
+            break;
+        case 11: // violet
+            red=128.0;
+            green=0.0;
+            blue=255.0;
+            break;
+        case 12: // rose
+            red=255.0;
+            green=0.0;
+            blue=128.0;
+            break;
     }
-    
-    //red = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
-    //green = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
-    //blue = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
-    
-    
+
     self = [super initWithFrame:frame isPreview:isPreview];
-    
     if (self)
         {
             ScreenSaverDefaults *defaults;
-            
             defaults = [ScreenSaverDefaults defaultsForModuleWithName:MyModuleName];
             
             // Register our default values
@@ -90,13 +124,11 @@ int clearTimes = 10;
                                          @"DrawBoth": @"YES"}];
             
             self.animationTimeInterval = 1/30.0;
-            
             if (isPreview) {
                 shortCount = SSRandomIntBetween(3,5);
                 gutterShort = SSRandomIntBetween(5,15);
             }
         }
-    
     return self;
 }
 
@@ -145,58 +177,87 @@ int clearTimes = 10;
     // Change colours
     countCycle++;
     if (countCycle > countReset) {
-        colorRandom = SSRandomIntBetween( 0, 3);
         countCycle = 0;
+        colorRandom = SSRandomIntBetween( 0, 12);
         switch (colorRandom) {
-            case 0: // red
-                red=255.0;
-                green=0.0;
-                blue=0.0;
-                break;
-                
-            case 1: // green
-                red=0.0;
-                green=255.0;
-                blue=0.0;
-                break;
-                
-            case 2: // blue
-                red=0.0;
-                green=0.0;
-                blue=255.0;
-                break;
-                
-            case 3: //white
+            case 0: // white
             default:
                 red=255.0;
                 green=255.0;
                 blue=255.0;
                 break;
+            case 1: // red
+                red=255.0;
+                green=0.0;
+                blue=0.0;
+                break;
+            case 2: // green
+                red=0.0;
+                green=255.0;
+                blue=0.0;
+                break;
+            case 3: // blue
+                red=0.0;
+                green=0.0;
+                blue=255.0;
+                break;
+            case 4: // yellow
+                red=255.0;
+                green=255.0;
+                blue=0.0;
+                break;
+            case 5: // cyan
+                red=0.0;
+                green=255.0;
+                blue=255.0;
+                break;
+            case 6: // magenta
+                red=255.0;
+                green=0.0;
+                blue=255.0;
+                break;
+            case 7: // orange
+                red=255.0;
+                green=128.0;
+                blue=0.0;
+                break;
+            case 8: // chartreuse green
+                red=128.0;
+                green=255.0;
+                blue=0.0;
+                break;
+            case 9: // spring green
+                red=0.0;
+                green=255.0;
+                blue=128.0;
+                break;
+            case 10: // azure
+                red=0.0;
+                green=128.0;
+                blue=255.0;
+                break;
+            case 11: // violet
+                red=128.0;
+                green=0.0;
+                blue=255.0;
+                break;
+            case 12: // rose
+                red=255.0;
+                green=0.0;
+                blue=128.0;
+                break;
         }
-        
     }
     
     
     // Calculate random width and height
-    /*
-     rect.size = NSMakeSize( SSRandomFloatBetween( size.width / 100.0,
-     size.width / 10.0 ),
-     SSRandomFloatBetween( size.height / 100.0,
-     size.height / 10.0 ));
-     */
-    
-    //rect.size = NSMakeSize(  size.height / 10.0, size.height / 10.0);
-    //rectC.size = NSMakeSize(  size.height / 10.0, size.height / 10.0);
-    
     boxSizeShort = monShort / shortCount;
-    
     longCount = ( monLong / boxSizeShort );
     
     //NSLog(@"longCount %d",longCount);
     
     gutterLong = gutterShort;
     longBuffer = ( monLong - ( boxSizeShort * longCount) ) / longCount;
-    
     rect.size = NSMakeSize( boxSizeShort - gutterShort , boxSizeShort - gutterShort);
     
     // Calculate random origin point
@@ -228,8 +289,8 @@ int clearTimes = 10;
     }
     
     // Decide what kind of shape to draw
-    shapeType = SSRandomIntBetween( 0, 1 );
-    
+    //shapeType = SSRandomIntBetween( 0, 1 );
+    shapeType = 1;
     switch (shapeType)
     {
         case 0: // rect
@@ -241,6 +302,19 @@ int clearTimes = 10;
             path = [NSBezierPath bezierPathWithOvalInRect:rect];
             break;
     }
+    
+    //clear space first
+    
+    // make it black
+    color = [NSColor colorWithCalibratedRed:0.0
+                                      green:0.0
+                                       blue:0.0
+                                      alpha:255.0];
+    
+    [color set];
+    
+    // And finally draw it
+    [path fill];
     
     // Calculate a random color
     alpha = SSRandomFloatBetween( 0.0, 255.0 ) / 255.0;
@@ -255,20 +329,17 @@ int clearTimes = 10;
     // And finally draw it
     defaults = [ScreenSaverDefaults defaultsForModuleWithName:MyModuleName];
     
-    if ([defaults boolForKey:@"DrawBoth"])
-    {
-        if (SSRandomIntBetween( 0, 1 ) == 0)
+    //if ([defaults boolForKey:@"DrawBoth"])
+    //{
+    //    if (SSRandomIntBetween( 0, 1 ) == 0)
             [path fill];
-        else
-            //[path stroke];
-            [path fill];
-    }
-    else if ([defaults boolForKey:@"DrawFilledShapes"])
-        [path fill];
-    else
-        //[path stroke];
-    [path fill];
-    
+    //    else
+    //        [path stroke];
+    //}
+    //else if ([defaults boolForKey:@"DrawFilledShapes"])
+    //    [path fill];
+    //else
+    //    [path stroke];
     
     
     // and clear some boxes
@@ -308,6 +379,8 @@ int clearTimes = 10;
         // And finally draw it
         [path fill];
     }
+    
+    return;
     
 }
 
