@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		6384E6D4202C54AD00FFA172 /* BlinkyView.h in Headers */ = {isa = PBXBuildFile; fileRef = 6384E6D3202C54AD00FFA172 /* BlinkyView.h */; };
 		6384E6D6202C54AD00FFA172 /* BlinkyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384E6D5202C54AD00FFA172 /* BlinkyView.m */; };
-		FA6774AB202D330100DFCC84 /* ConfigureSheet.nib in Resources */ = {isa = PBXBuildFile; fileRef = FA6774AA202D330100DFCC84 /* ConfigureSheet.nib */; };
+		FA3BCC722034F5DA00F5E0EC /* ConfigureSheet.nib in Resources */ = {isa = PBXBuildFile; fileRef = FA3BCC712034F5DA00F5E0EC /* ConfigureSheet.nib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,7 +17,7 @@
 		6384E6D3202C54AD00FFA172 /* BlinkyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlinkyView.h; sourceTree = "<group>"; };
 		6384E6D5202C54AD00FFA172 /* BlinkyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlinkyView.m; sourceTree = "<group>"; };
 		6384E6D7202C54AD00FFA172 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FA6774AA202D330100DFCC84 /* ConfigureSheet.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = ConfigureSheet.nib; sourceTree = "<group>"; };
+		FA3BCC712034F5DA00F5E0EC /* ConfigureSheet.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = ConfigureSheet.nib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,8 +52,8 @@
 			children = (
 				6384E6D3202C54AD00FFA172 /* BlinkyView.h */,
 				6384E6D5202C54AD00FFA172 /* BlinkyView.m */,
+				FA3BCC712034F5DA00F5E0EC /* ConfigureSheet.nib */,
 				6384E6D7202C54AD00FFA172 /* Info.plist */,
-				FA6774AA202D330100DFCC84 /* ConfigureSheet.nib */,
 			);
 			path = Blinky;
 			sourceTree = "<group>";
@@ -128,7 +128,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA6774AB202D330100DFCC84 /* ConfigureSheet.nib in Resources */,
+				FA3BCC722034F5DA00F5E0EC /* ConfigureSheet.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +256,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Blinky/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = online.imperfectcode.blinky;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = saver;
@@ -269,6 +270,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Blinky/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = online.imperfectcode.blinky;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = saver;

@@ -2,7 +2,8 @@
 //  BlinkyView.h
 //  Blinky
 //
-//  Created by David Robinson on 8/2/18.
+//  Created by David Robinson on 08-FEB-02018.
+//  Edited  by David Robinson on 20-FEB-02018.
 //  Copyright © 2018 Imperfect Code. All rights reserved.
 //
 //  Originally based on the tutorial "Write a Screen Saver: Part I" by Brian Christensen
@@ -20,6 +21,7 @@
     IBOutlet id drawFilledShapesOption;
     IBOutlet id drawOutlinedShapesOption;
     IBOutlet id drawBothOption;
+    IBOutlet id debugModeOption;
 }
 
 @end
