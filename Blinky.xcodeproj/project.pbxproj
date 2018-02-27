@@ -18,6 +18,9 @@
 		6384E6D5202C54AD00FFA172 /* BlinkyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlinkyView.m; sourceTree = "<group>"; };
 		6384E6D7202C54AD00FFA172 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA3BCC712034F5DA00F5E0EC /* ConfigureSheet.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = ConfigureSheet.nib; sourceTree = "<group>"; };
+		FA6C451D203CEB4D0024A8B8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		FA6C451E203CEB5D0024A8B8 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		FA6C451F203CEB6C0024A8B8 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +57,9 @@
 				6384E6D5202C54AD00FFA172 /* BlinkyView.m */,
 				FA3BCC712034F5DA00F5E0EC /* ConfigureSheet.nib */,
 				6384E6D7202C54AD00FFA172 /* Info.plist */,
+				FA6C451D203CEB4D0024A8B8 /* README.md */,
+				FA6C451E203CEB5D0024A8B8 /* CHANGELOG.md */,
+				FA6C451F203CEB6C0024A8B8 /* TODO.md */,
 			);
 			path = Blinky;
 			sourceTree = "<group>";

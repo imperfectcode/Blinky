@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0 b6</string>
+	<string>1.0 b7</string>
 	<key>CFBundleVersion</key>
-	<string>6</string>
+	<string>7</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2018 Imperfect Code. All rights reserved.</string>
 	<key>NSPrincipalClass</key>

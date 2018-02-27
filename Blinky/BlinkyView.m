@@ -23,7 +23,9 @@ bool DEBUG_ONCE = FALSE;
 
 bool CLEAR_RESET = TRUE;
 unsigned int CLEAR_CYCLE=0;
-
+bool CLEAR_FULL = FALSE;
+unsigned int CLEAR_FULL_CYCLE=0;
+unsigned int CLEAR_FULL_CYCLE_SET=0;
 
 float WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_SHORT, WINDOW_LONG, WINDOW_WIDTH_OLD;
 unsigned int WINDOW_TALL=0;
@@ -32,6 +34,7 @@ unsigned int COUNT_SHORT, COUNT_LONG;
 float ORIGIN_SHORT, ORIGIN_LONG;
 float BOX_SIZE;
 float BOX_GUTTER;
+unsigned int BOX_NUMBER;
 float OFFSET_SHORT, OFFSET_LONG;
 float BUFFER_SHORT, BUFFER_LONG;
 
@@ -39,9 +42,8 @@ unsigned int SHAPE_TYPE;
 
 unsigned int COLOUR_RANDOM;
 unsigned int COLOUR_CYCLE;
-unsigned int COLOUR_CYCLE_RESET = 1000;
+unsigned int COLOUR_CYCLE_RESET;
 
-//float COLOUR_R, COLOUR_G, COLOUR_B, COLOUR_A;
 float COLOUR_H, COLOUR_S, COLOUR_B, COLOUR_A;
 
 unsigned int CLEAR_COUNT;
@@ -91,7 +93,12 @@ unsigned int LOOP_COUNT=5;
 - (void)animateOneFrame
 {
     NSBezierPath *path;
-    NSRect rect;
+    //NSRect rect;
+    
+    NSRect RECT_WINDOW;
+    NSRect RECT_LIGHT;
+    NSRect RECT_CLEAR;
+    
     NSSize WINDOW_SIZE;
     NSColor *color;
     ScreenSaverDefaults *defaults;
@@ -101,10 +108,10 @@ unsigned int LOOP_COUNT=5;
     WINDOW_WIDTH = WINDOW_SIZE.width;
     WINDOW_HEIGHT = WINDOW_SIZE.height;
     
-    if ( WINDOW_WIDTH_OLD == !WINDOW_WIDTH )
-    {
-        CLEAR_RESET = TRUE;
-    }
+    //if ( WINDOW_WIDTH_OLD == !WINDOW_WIDTH )
+    //{
+    //    CLEAR_RESET = TRUE;
+    //}
     
     WINDOW_WIDTH_OLD = WINDOW_WIDTH;
     
@@ -121,6 +128,13 @@ unsigned int LOOP_COUNT=5;
         WINDOW_TALL = 0;
     }
     
+    CLEAR_FULL_CYCLE_SET++;
+    if (CLEAR_FULL_CYCLE_SET > 10000)
+    {
+        CLEAR_RESET=TRUE;
+        CLEAR_FULL_CYCLE_SET=0;
+    }
+    
     // Set initial conditions
     if ( CLEAR_RESET )
     {
@@ -134,12 +148,10 @@ unsigned int LOOP_COUNT=5;
         // Calculate box size
         BOX_SIZE = WINDOW_SHORT / COUNT_SHORT;
         
-        //BOX_GUTTER = SSRandomIntBetween( 5, 31);
-        //BOX_GUTTER = 10;
-        
         BOX_GUTTER = SSRandomFloatBetween( 5, ( floor(  BOX_SIZE - 1 ) ) );
-        
         COUNT_LONG = floor( WINDOW_LONG / BOX_SIZE );
+        
+        BOX_NUMBER = COUNT_SHORT * COUNT_LONG;
         
         if ( [defaults boolForKey:@"DebugMode"] || DEBUG_SET )
         {
@@ -154,9 +166,9 @@ unsigned int LOOP_COUNT=5;
         BUFFER_SHORT = ( WINDOW_SHORT - ( BOX_SIZE * COUNT_SHORT) ) / (COUNT_SHORT-1);
         BUFFER_LONG = ( WINDOW_LONG - ( BOX_SIZE * COUNT_LONG) ) / (COUNT_LONG-1);
         
-        rect.size = NSMakeSize( WINDOW_WIDTH, WINDOW_HEIGHT );
-        rect.origin = NSMakePoint( 0 , 0 ) ;
-        path = [NSBezierPath bezierPathWithRect:rect];
+        RECT_WINDOW.size = NSMakeSize( WINDOW_WIDTH, WINDOW_HEIGHT );
+        RECT_WINDOW.origin = NSMakePoint( 0 , 0 ) ;
+        path = [NSBezierPath bezierPathWithRect:RECT_WINDOW];
         color = [NSColor blackColor];
         [color set];
         [path fill];
@@ -164,21 +176,14 @@ unsigned int LOOP_COUNT=5;
         CLEAR_RESET = FALSE;
     }
     
-    //CLEAR_CYCLE++;
-    //if ( CLEAR_CYCLE > 10000 )
-    //{
-    //    CLEAR_RESET = TRUE;
-    //    CLEAR_CYCLE = 0;
-    //}
-    
     // Change colours
     COLOUR_CYCLE++;
-    COLOUR_S = 1.0;
-    COLOUR_B = 1.0;
-    COLOUR_A = 1.0;
     if ( COLOUR_CYCLE > COLOUR_CYCLE_RESET ) {
         COLOUR_CYCLE = 0;
         CLEAR_COUNT = pow( COUNT_SHORT, 0.2 ) * SSRandomIntBetween( 1, 9 );
+        COLOUR_S = 1.0;
+        COLOUR_B = 1.0;
+        COLOUR_A = 1.0;
         COLOUR_RANDOM = SSRandomIntBetween( 0, 3 );
         switch ( COLOUR_RANDOM )
         {
@@ -264,10 +269,11 @@ unsigned int LOOP_COUNT=5;
     {
         if ( !DEBUG_ONCE )
         {
+            // when debugging, clear the whole window with white
             DEBUG_ONCE =TRUE;
-            rect.size = NSMakeSize( WINDOW_WIDTH, WINDOW_HEIGHT );
-            rect.origin = NSMakePoint( 0 , 0 ) ;
-            path = [NSBezierPath bezierPathWithRect:rect];
+            RECT_WINDOW.size = NSMakeSize( WINDOW_WIDTH, WINDOW_HEIGHT );
+            RECT_WINDOW.origin = NSMakePoint( 0 , 0 ) ;
+            path = [NSBezierPath bezierPathWithRect:RECT_WINDOW];
             color = [NSColor whiteColor];
             [color set];
             [path fill];
@@ -276,111 +282,141 @@ unsigned int LOOP_COUNT=5;
     
     if ([defaults boolForKey:@"DebugMode"] || DEBUG_SET )
     {
-        LOOP_COUNT = 100;
+        // when debugging, run many more loops of the drawing cycles
+        LOOP_COUNT = pow( COUNT_SHORT, 0.5) * 100;
+    }
+    else
+    {
+        LOOP_COUNT = pow( COUNT_SHORT, 0.5) ;
     }
     
-    rect.size = NSMakeSize( BOX_SIZE - (BOX_GUTTER/2) , BOX_SIZE - (BOX_GUTTER/2));
+    RECT_CLEAR.size = NSMakeSize( BOX_SIZE , BOX_SIZE );
+    RECT_LIGHT.size = NSMakeSize( BOX_SIZE - (BOX_GUTTER/2) , BOX_SIZE - (BOX_GUTTER/2) );
     
-    for (int i=0; i<LOOP_COUNT; i++)
+    if ( CLEAR_FULL )
     {
-        OFFSET_LONG = SSRandomIntBetween( 0, COUNT_LONG-1);
-        OFFSET_SHORT = SSRandomIntBetween( 0, COUNT_SHORT-1);
-        
-        //NSLog(@"OFFSET_LONG %d",OFFSET_LONG);
-        //NSLog(@"OFFSET_SHORT %d",OFFSET_SHORT);
-        
-        //ORIGIN_LONG = ( OFFSET_LONG*WINDOW_SHORT / COUNT_SHORT ) + OFFSET_LONG*BUFFER_LONG + (BOX_GUTTER/2);
-        //ORIGIN_SHORT = ( OFFSET_SHORT*WINDOW_SHORT / COUNT_SHORT ) + (BOX_GUTTER/2) ;
-        
-        ORIGIN_LONG = ( OFFSET_LONG*BOX_SIZE ) + OFFSET_LONG*BUFFER_LONG + (BOX_GUTTER/4);
-        ORIGIN_SHORT = ( OFFSET_SHORT*BOX_SIZE ) + OFFSET_SHORT*BUFFER_SHORT + (BOX_GUTTER/4) ;
-        
-        //NSLog(@"ORIGIN_LONG %d",ORIGIN_LONG);
-        //NSLog(@"ORIGIN_SHORT %d",ORIGIN_SHORT);
-        //NSLog(@"WINDOW_LONG %d",WINDOW_LONG);
-        //NSLog(@"WINDOW_SHORT %d",WINDOW_SHORT);
-        
-        if ( WINDOW_TALL == 0 ) {
-            rect.origin = NSMakePoint( ORIGIN_LONG , ORIGIN_SHORT ) ;
-        }
-        else
+        CLEAR_FULL_CYCLE++;
+        if (CLEAR_FULL_CYCLE > BOX_NUMBER * 5)
         {
-            rect.origin = NSMakePoint( ORIGIN_SHORT , ORIGIN_LONG ) ;
+            CLEAR_FULL = FALSE;
+            CLEAR_RESET = TRUE;
+            CLEAR_FULL_CYCLE = 0;
         }
-        
-        // Decide what kind of shape to draw
-        //SHAPE_TYPE = SSRandomIntBetween( 0, 1 );
-        SHAPE_TYPE = 1;
-        
-        if ([defaults boolForKey:@"DebugMode"] || DEBUG_SET )
+    }
+    else
+    {
+        // loop to draw lights on the screen
+        for (int i=0; i<LOOP_COUNT; i++)
         {
+            OFFSET_LONG = SSRandomIntBetween( 0, COUNT_LONG-1);
+            OFFSET_SHORT = SSRandomIntBetween( 0, COUNT_SHORT-1);
+            
+            //NSLog(@"OFFSET_LONG %d",OFFSET_LONG);
+            //NSLog(@"OFFSET_SHORT %d",OFFSET_SHORT);
+            
+            ORIGIN_LONG = ( OFFSET_LONG*BOX_SIZE ) + OFFSET_LONG*BUFFER_LONG ;
+            ORIGIN_SHORT = ( OFFSET_SHORT*BOX_SIZE ) + OFFSET_SHORT*BUFFER_SHORT ;
+            
+            //NSLog(@"ORIGIN_LONG %d",ORIGIN_LONG);
+            //NSLog(@"ORIGIN_SHORT %d",ORIGIN_SHORT);
+            //NSLog(@"WINDOW_LONG %d",WINDOW_LONG);
+            //NSLog(@"WINDOW_SHORT %d",WINDOW_SHORT);
+            
+            if ( WINDOW_TALL == 0 ) {
+                RECT_CLEAR.origin = NSMakePoint( ORIGIN_LONG , ORIGIN_SHORT ) ;
+                RECT_LIGHT.origin = NSMakePoint( ORIGIN_LONG + (BOX_GUTTER/4) , ORIGIN_SHORT + (BOX_GUTTER/4) ) ;
+            }
+            else
+            {
+                RECT_CLEAR.origin = NSMakePoint( ORIGIN_SHORT , ORIGIN_LONG ) ;
+                RECT_LIGHT.origin = NSMakePoint( ORIGIN_SHORT + (BOX_GUTTER/4) , ORIGIN_LONG + (BOX_GUTTER/4) ) ;
+            }
+            
+            path = [NSBezierPath bezierPathWithRect:RECT_CLEAR];
+            
+            // before drawing a shape, clear the space with black
+            
+            color = [NSColor blackColor];
+            [color set];
+            // And finally draw it
+            [path fill];
+            
+            // Decide what kind of shape to draw
+            // old code that changed the shape draw... could be useful for debugging
+            //SHAPE_TYPE = SSRandomIntBetween( 0, 1 );
+            
             SHAPE_TYPE = 1;
+            
+            if ([defaults boolForKey:@"DebugMode"] || DEBUG_SET )
+            {
+                SHAPE_TYPE = 1;
+            }
+            
+            switch (SHAPE_TYPE)
+            {
+                case 0: // rect
+                    path = [NSBezierPath bezierPathWithRect:RECT_LIGHT];
+                    break;
+                    
+                case 1: // circle
+                default:
+                    path = [NSBezierPath bezierPathWithOvalInRect:RECT_LIGHT];
+                    break;
+            }
+            
+            
+            
+            // Calculate a random color
+            COLOUR_B = SSRandomFloatBetween( 0.0, 1.0 );
+            //NSLog(@"blinkytest - COLOUR_B1 %f",COLOUR_B);
+            COLOUR_B = pow( COLOUR_B, 2 );
+            // make brighter lights less common
+            //NSLog(@"blinkytest - COLOUR_B2 %f",COLOUR_B);
+            
+            if ( [defaults boolForKey:@"DebugMode"] || DEBUG_SET )
+            {
+                color = [NSColor colorWithCalibratedHue:COLOUR_H
+                                             saturation:COLOUR_S
+                                             brightness:1.0
+                                                  alpha:COLOUR_A];
+            }
+            else
+            {
+                color = [NSColor colorWithCalibratedHue:COLOUR_H
+                                             saturation:COLOUR_S
+                                             brightness:COLOUR_B
+                                                  alpha:COLOUR_A];
+            }
+            
+            [color set];
+            
+            // And finally draw it
+            defaults = [ScreenSaverDefaults defaultsForModuleWithName:MyModuleName];
+            
+            //if ([defaults boolForKey:@"DrawBoth"])
+            //{
+            //    if (SSRandomIntBetween( 0, 1 ) == 0)
+            [path fill];
+            //    else
+            //        [path stroke];
+            //}
+            //else if ([defaults boolForKey:@"DrawFilledShapes"])
+            //    [path fill];
+            //else
+            //    [path stroke];
+            
         }
-        
-        switch (SHAPE_TYPE)
-        {
-            case 0: // rect
-                path = [NSBezierPath bezierPathWithRect:rect];
-                break;
-                
-            case 1: // circle
-            default:
-                path = [NSBezierPath bezierPathWithOvalInRect:rect];
-                break;
-        }
-        
-        //clear space first
-
-        color = [NSColor blackColor];
-        [color set];
-        
-        // And finally draw it
-        [path fill];
-        
-        // Calculate a random color
-        COLOUR_B = SSRandomFloatBetween( 0.0, 1.0 );
-        
-        if ( [defaults boolForKey:@"DebugMode"] || DEBUG_SET )
-        {
-            color = [NSColor colorWithCalibratedHue:COLOUR_H
-                                         saturation:COLOUR_S
-                                         brightness:1.0
-                                              alpha:COLOUR_A];
-        }
-        else
-        {
-            color = [NSColor colorWithCalibratedHue:COLOUR_H
-                                         saturation:COLOUR_S
-                                         brightness:COLOUR_B
-                                              alpha:COLOUR_A];
-        }
-        
-        [color set];
-        
-        // And finally draw it
-        defaults = [ScreenSaverDefaults defaultsForModuleWithName:MyModuleName];
-        
-        //if ([defaults boolForKey:@"DrawBoth"])
-        //{
-        //    if (SSRandomIntBetween( 0, 1 ) == 0)
-        [path fill];
-        //    else
-        //        [path stroke];
-        //}
-        //else if ([defaults boolForKey:@"DrawFilledShapes"])
-        //    [path fill];
-        //else
-        //    [path stroke];
         
     }
     
     // and clear some boxes
     
+    CLEAR_COUNT = pow( BOX_NUMBER, 0.5);
     
     for (int i=0; i<(CLEAR_COUNT); i++)
     {
         
-        rect.size = NSMakeSize( BOX_SIZE , BOX_SIZE );
+        RECT_CLEAR.size = NSMakeSize( BOX_SIZE , BOX_SIZE );
         
         // Calculate random origin point
         
@@ -391,35 +427,28 @@ unsigned int LOOP_COUNT=5;
         ORIGIN_SHORT = ( OFFSET_SHORT*BOX_SIZE ) + OFFSET_SHORT*BUFFER_SHORT;
         
         if ( WINDOW_TALL == 0 ) {
-            rect.origin = NSMakePoint( ORIGIN_LONG , ORIGIN_SHORT ) ;
+            RECT_CLEAR.origin = NSMakePoint( ORIGIN_LONG , ORIGIN_SHORT ) ;
         }
         else
         {
-            rect.origin = NSMakePoint( ORIGIN_SHORT , ORIGIN_LONG ) ;
+            RECT_CLEAR.origin = NSMakePoint( ORIGIN_SHORT , ORIGIN_LONG ) ;
         }
         
         // Make a rectangle
-        path = [NSBezierPath bezierPathWithRect:rect];
+        path = [NSBezierPath bezierPathWithRect:RECT_CLEAR];
         
         if ( ![defaults boolForKey:@"DebugMode"] && !DEBUG_SET )
         {
-            
             color = [NSColor blackColor];
-            
             [color set];
-            
             // And finally draw it
             [path fill];
-            
         }
         else
         {
             color = [NSColor whiteColor];
-            
             [color set];
-            
             // And finally draw it
-            
             [path stroke];
         }
     }
