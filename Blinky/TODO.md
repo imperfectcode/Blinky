@@ -7,3 +7,4 @@
 * preference window doesn't do anything - should fix that
 * adjustable settings for size, blink speek, colour change speed
 * does not work on multiply displays of different sizes
+
