@@ -47,7 +47,7 @@ unsigned int COLOUR_CYCLE_RESET;
 float COLOUR_H, COLOUR_S, COLOUR_B, COLOUR_A;
 
 unsigned int CLEAR_COUNT;
-unsigned int LOOP_COUNT=5;
+unsigned int LOOP_COUNT=1;
 
 - (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview
 {
@@ -148,7 +148,7 @@ unsigned int LOOP_COUNT=5;
         // Calculate box size
         BOX_SIZE = WINDOW_SHORT / COUNT_SHORT;
         
-        BOX_GUTTER = SSRandomFloatBetween( 5, ( floor(  BOX_SIZE - 1 ) ) );
+        BOX_GUTTER = SSRandomFloatBetween( 5, ( floor(  2 * BOX_SIZE - 1 ) ) );
         COUNT_LONG = floor( WINDOW_LONG / BOX_SIZE );
         
         BOX_NUMBER = COUNT_SHORT * COUNT_LONG;

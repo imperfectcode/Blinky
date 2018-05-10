@@ -31,4 +31,4 @@ PROBLEM: configure sheet is broken
 
 CHANGE: clear space before drawing new light now done with larger square to ensure there is no fringing
 
-å
+
